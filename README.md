@@ -1,7 +1,8 @@
 # php2go
-go实现php方法，go版本1.18+，需支持泛型
 
-返回类型非interface{}类型，调用指定
+go实现php的一些数组方法，go版本1.18+，需支持泛型
+
+返回类型由调用指定，舍弃interface{}
 
 ```
 type Test struct {
