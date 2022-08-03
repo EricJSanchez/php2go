@@ -86,7 +86,7 @@ func ArrayUnique[T IntegerString](s []T) (retData []T) {
 }
 
 // InArray 值是否存在切片中，只限一维数组
-func InArray[T IntegerString](s []T, val T) bool {
+func InArray[T IntegerString](val T, s []T) bool {
 	for _, item := range s {
 		if val == item {
 			return true

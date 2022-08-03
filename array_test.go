@@ -42,7 +42,7 @@ func TestArray(t *testing.T) {
 	rr5 := ArraySum[int64]([]int64{1, 2, 3, 4, 5}, "")
 	fmt.Printf("5 %T \n", rr5)
 	fmt.Println(rr5)
-	rr6 := InArray([]int64{1, 2, 3, 4, 5}, 6)
+	rr6 := InArray(6, []int64{1, 2, 3, 4, 5})
 	fmt.Printf("6 %T \n", rr6)
 	fmt.Println(rr6)
 	rr7 := ArrayIntersect([]int64{1, 2, 3, 4, 5}, []int64{33, 109})

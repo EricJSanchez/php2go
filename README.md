@@ -31,7 +31,7 @@ rr3 := ArrayReverse([]int64{1, 2, 3, 4, 5})
 rr4 := ArraySum[int](sl, "Id")
 rr5 := ArraySum[int64]([]int64{1, 2, 3, 4, 5}, "")
 
-rr6 := InArray([]int64{1, 2, 3, 4, 5}, 6)
+rr6 := InArray(6, []int64{1, 2, 3, 4, 5})
 
 rr7 := ArrayIntersect([]int64{1, 2, 3, 4, 5}, []int64{33, 109})
 
