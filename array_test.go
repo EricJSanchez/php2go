@@ -56,13 +56,13 @@ func TestArray(t *testing.T) {
 	fmt.Printf("9 %T \n", rr9)
 	fmt.Println(rr9)
 
-	//rr10 := ArrayMin([]string{"a", "b", "c", "a", "b", "d", "d3"})
-	rr10 := ArrayMin([]int{1, 2, 3, 4, 5, 0})
+	//rr10 := Min([]string{"a", "b", "c", "a", "b", "d", "d3"})
+	rr10 := Min([]int{1, 2, 3, 4, 5, 0})
 	fmt.Printf("10 %T \n", rr10)
 	fmt.Println(rr10)
 
-	//rr11 := ArrayMax([]string{"a", "b", "c", "a", "b", "d", "d3"})
-	rr11 := ArrayMin([]int64{})
+	//rr11 := Max([]string{"a", "b", "c", "a", "b", "d", "d3"})
+	rr11 := Min([]int64{})
 	fmt.Printf("11 %T \n", rr11)
 	fmt.Println(rr11)
 }
