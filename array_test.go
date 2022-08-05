@@ -62,7 +62,7 @@ func TestArray(t *testing.T) {
 	fmt.Println(rr10)
 
 	//rr11 := ArrayMax([]string{"a", "b", "c", "a", "b", "d", "d3"})
-	rr11 := ArrayMin([]int64{1, 2, 3, 4, 5, 0})
+	rr11 := ArrayMin([]int64{})
 	fmt.Printf("11 %T \n", rr11)
 	fmt.Println(rr11)
 }

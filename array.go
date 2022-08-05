@@ -131,6 +131,9 @@ func ArrayDiff[T IntegerString](s1, s2 []T) (diffArr []T) {
 
 // ArrayMax 求最大值
 func ArrayMax[T IntegerString](s1 []T) (retVal T) {
+	if len(s1) == 0 {
+		return
+	}
 	retVal = s1[0]
 	for _, val := range s1 {
 		if val > retVal {
@@ -142,6 +145,9 @@ func ArrayMax[T IntegerString](s1 []T) (retVal T) {
 
 // ArrayMin 求最小值
 func ArrayMin[T IntegerString](s1 []T) (retVal T) {
+	if len(s1) == 0 {
+		return
+	}
 	retVal = s1[0]
 	for _, val := range s1 {
 		if val < retVal {
