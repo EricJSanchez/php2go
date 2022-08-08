@@ -85,13 +85,26 @@ func ArrayUnique[T IntegerString](s []T) (retData []T) {
 	return
 }
 
-// InArray 值是否存在切片中，只限一维数组
-func InArray[T IntegerString](val T, s []T) bool {
-	for _, item := range s {
-		if val == item {
-			return true
+// InArray 值是否存在
+func InArray(needle interface{}, haystack interface{}) bool {
+	val := reflect.ValueOf(haystack)
+	switch val.Kind() {
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < val.Len(); i++ {
+			if reflect.DeepEqual(needle, val.Index(i).Interface()) {
+				return true
+			}
 		}
+	case reflect.Map:
+		for _, k := range val.MapKeys() {
+			if reflect.DeepEqual(needle, val.MapIndex(k).Interface()) {
+				return true
+			}
+		}
+	default:
+		panic("haystack: haystack type muset be slice, array or map")
 	}
+
 	return false
 }
 
