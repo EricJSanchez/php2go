@@ -13,7 +13,7 @@ type IntegerString interface {
 }
 
 // ArrayReverse 数组翻转
-func ArrayReverse[T any](s []T) []T {
+func ArrayReverse[T IntegerString](s []T) []T {
 	l := len(s)
 	r := make([]T, l)
 	for i, ele := range s {
@@ -23,7 +23,7 @@ func ArrayReverse[T any](s []T) []T {
 }
 
 // ArrayColumn 获取二维数组中的某一列，组合成一维数组
-func ArrayColumn[T any](s interface{}, col string) (retCol []T) {
+func ArrayColumn[T IntegerString](s interface{}, col string) (retCol []T) {
 	rv := reflect.ValueOf(s)
 	ln := rv.Len()
 	for i := 0; i < ln; i++ {
