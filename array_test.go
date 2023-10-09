@@ -5,24 +5,29 @@ import (
 	"testing"
 )
 
-func TestArray(t *testing.T) {
-	type Test struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-		Age  int64  `json:"age"`
-	}
-	var sl []Test
-	sl = append(sl, Test{
+type Person struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+	Age  int64  `json:"age"`
+}
+
+var sl = []Person{
+	{
 		Id:   1,
 		Name: "n1",
 		Age:  101,
-	})
-	sl = append(sl, Test{
+	}, {
 		Id:   2,
 		Name: "n2",
 		Age:  102,
-	})
+	}, {
+		Id:   3,
+		Name: "n3",
+		Age:  103,
+	},
+}
 
+func TestArray(t *testing.T) {
 	rr := ArrayColumn[int](sl, "Id")
 	fmt.Printf("%T \n", rr)
 	fmt.Println(rr)
@@ -66,4 +71,9 @@ func TestArray(t *testing.T) {
 	rr11 := Min([]int64{})
 	fmt.Printf("11 %T:", rr11)
 	fmt.Println(rr11)
+}
+
+func TestSliceRemove(t *testing.T) {
+	rr := SliceRemove[Person](sl, []int{3, 2, 4, 0})
+	fmt.Printf("type:%T,val:%v \n", rr, rr)
 }

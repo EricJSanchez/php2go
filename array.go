@@ -2,6 +2,7 @@ package php2go
 
 import (
 	"reflect"
+	"sort"
 )
 
 type Integer interface {
@@ -168,4 +169,26 @@ func Min[T IntegerString](s1 []T) (retVal T) {
 		}
 	}
 	return
+}
+
+// SliceRemove 根据index删除值
+func SliceRemove[T any](ori []T, idx []int, flag ...int) (ret []T) {
+	defer func() {
+		if r := recover(); r != nil {
+			ret = ori
+			return
+		}
+	}()
+	if len(idx) == 0 {
+		ret = ori
+		return
+	}
+	if len(flag) == 0 {
+		sort.IntSlice(idx).Sort()
+	} else {
+		for ii, _ := range idx {
+			idx[ii] = idx[ii] - 1
+		}
+	}
+	return SliceRemove(append(ori[:idx[0]], ori[idx[0]+1:]...), idx[1:], 1)
 }
