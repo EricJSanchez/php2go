@@ -11,7 +11,7 @@ type Person struct {
 	Age  int64  `json:"age"`
 }
 
-var sl = []Person{
+var ps = []Person{
 	{
 		Id:   1,
 		Name: "n1",
@@ -28,20 +28,20 @@ var sl = []Person{
 }
 
 func TestArray(t *testing.T) {
-	rr := ArrayColumn[int](sl, "Id")
+	rr := ArrayColumn[int](ps, "Id")
 	fmt.Printf("%T \n", rr)
 	fmt.Println(rr)
-	rr1 := ArrayColumn[string](sl, "Name")
+	rr1 := ArrayColumn[string](ps, "Name")
 	fmt.Printf("1 %T:", rr1)
 	fmt.Println(rr1)
-	rr2 := ArrayColumn[int64](sl, "Age")
+	rr2 := ArrayColumn[int64](ps, "Age")
 	fmt.Printf("2 %T:", rr2)
 	fmt.Println(rr2)
 
 	rr3 := ArrayReverse([]int64{1, 2, 3, 4, 5})
 	fmt.Printf("3 %T:", rr3)
 	fmt.Println(rr3)
-	rr4 := ArraySum[int](sl, "Id")
+	rr4 := ArraySum[int](ps, "Id")
 	fmt.Printf("4 %T:", rr4)
 	fmt.Println(rr4)
 	rr5 := ArraySum[int64]([]int64{1, 2, 3, 4, 5}, "")
@@ -74,6 +74,6 @@ func TestArray(t *testing.T) {
 }
 
 func TestSliceRemove(t *testing.T) {
-	rr := SliceRemove[Person](sl, []int{3, 2, 4, 0})
+	rr := SliceRemove[Person](ps, []int{3, 2, 4, 0})
 	fmt.Printf("type:%T,val:%v \n", rr, rr)
 }
