@@ -2,6 +2,7 @@ package php2go
 
 import (
 	"fmt"
+	"sync"
 	"testing"
 )
 
@@ -76,4 +77,28 @@ func TestArray(t *testing.T) {
 func TestSliceRemove(t *testing.T) {
 	rr := SliceRemove[Person](ps, []int{3, 2, 4, 0})
 	fmt.Printf("type:%T,val:%v \n", rr, rr)
+}
+
+func TestSafeSlice(t *testing.T) {
+	// 示例结构体类型
+	type MyStruct struct {
+		Value int
+	}
+
+	safeSlice := NewSafeSlice[MyStruct]()
+	var wg sync.WaitGroup
+	// 模拟并发写入
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(val int) {
+			defer wg.Done()
+			safeSlice.Append(MyStruct{Value: val})
+		}(i)
+	}
+	wg.Wait()
+	// 获取并打印切片内容
+	result := safeSlice.GetSlice()
+	for _, v := range result {
+		fmt.Println(v.Value)
+	}
 }

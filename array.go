@@ -3,6 +3,7 @@ package php2go
 import (
 	"reflect"
 	"sort"
+	"sync"
 )
 
 type Integer interface {
@@ -191,4 +192,34 @@ func SliceRemove[T any](ori []T, idx []int, flag ...int) (ret []T) {
 		}
 	}
 	return SliceRemove(append(ori[:idx[0]], ori[idx[0]+1:]...), idx[1:], 1)
+}
+
+// SafeSlice 是一个线程安全的切片封装
+type SafeSlice[T any] struct {
+	mu    sync.Mutex
+	slice []T
+}
+
+// NewSafeSlice 创建并返回一个新的 SafeSlice 实例
+func NewSafeSlice[T any]() *SafeSlice[T] {
+	return &SafeSlice[T]{
+		slice: make([]T, 0),
+	}
+}
+
+// Append 添加元素到切片中，确保线程安全
+func (ss *SafeSlice[T]) Append(value T) {
+	ss.mu.Lock()         // 加锁
+	defer ss.mu.Unlock() // 函数结束时解锁
+	ss.slice = append(ss.slice, value)
+}
+
+// GetSlice 返回当前切片的副本，确保线程安全
+func (ss *SafeSlice[T]) GetSlice() []T {
+	ss.mu.Lock()         // 加锁
+	defer ss.mu.Unlock() // 函数结束时解锁
+	// 返回切片的副本以避免外部修改
+	newSlice := make([]T, len(ss.slice))
+	copy(newSlice, ss.slice)
+	return newSlice
 }
