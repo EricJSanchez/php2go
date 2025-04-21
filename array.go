@@ -1,6 +1,7 @@
 package php2go
 
 import (
+	"math"
 	"reflect"
 	"sort"
 	"sync"
@@ -192,6 +193,29 @@ func SliceRemove[T any](ori []T, idx []int, flag ...int) (ret []T) {
 		}
 	}
 	return SliceRemove(append(ori[:idx[0]], ori[idx[0]+1:]...), idx[1:], 1)
+}
+
+// Slice2Chunk 切片按传入的数量切割成二维切片
+func Slice2Chunk[T any](ori []T, chunkSize int) (ret [][]T) {
+	defer func() {
+		if r := recover(); r != nil {
+			return
+		}
+	}()
+	total := len(ori)
+	j := math.Ceil(float64(total) / float64(chunkSize))
+	var left, right int
+	for i := 0; i < int(j); i++ {
+		if left+chunkSize > total {
+			right = total
+		} else {
+			right = left + chunkSize
+		}
+		cutSlice := ori[left:right]
+		ret = append(ret, cutSlice)
+		left = right
+	}
+	return
 }
 
 // SafeSlice 是一个线程安全的切片封装

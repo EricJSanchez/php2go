@@ -102,3 +102,24 @@ func TestSafeSlice(t *testing.T) {
 		fmt.Println(v.Value)
 	}
 }
+
+func TestSliceCut(t *testing.T) {
+
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+	fmt.Println(Slice2Chunk[int](arr, 3))
+
+	arrStr := []string{"a", "b", "c", "d", "e", "f", "g"}
+	fmt.Println(Slice2Chunk[string](arrStr, 2))
+
+	// 示例结构体类型
+	type MyStruct struct {
+		Value int
+	}
+	var ms []MyStruct
+	for i := 0; i < 10; i++ {
+		ms = append(ms, MyStruct{
+			Value: i,
+		})
+	}
+	fmt.Println(Slice2Chunk[MyStruct](ms, 2))
+}
