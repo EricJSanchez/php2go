@@ -2,8 +2,8 @@ package php2go
 
 import (
 	"fmt"
-	"sync"
 	"testing"
+	"time"
 )
 
 type Person struct {
@@ -86,7 +86,7 @@ func TestSafeSlice(t *testing.T) {
 	}
 
 	safeSlice := NewSafeSlice[MyStruct]()
-	var wg sync.WaitGroup
+	gt := NewGoTool(4)
 	var ms []MyStruct
 	// 模拟并发写入
 	for i := 0; i < 20; i++ {
@@ -95,13 +95,15 @@ func TestSafeSlice(t *testing.T) {
 	mss := Slice2Chunk[MyStruct](ms, 2)
 
 	for _, item := range mss {
-		wg.Add(1)
+		gt.Add()
 		go func(item []MyStruct) {
-			defer wg.Done()
+			defer gt.Done()
 			safeSlice.Append(item...)
+			fmt.Println(item)
+			time.Sleep(1 * time.Second)
 		}(item)
 	}
-	wg.Wait()
+	gt.Wait()
 	// 获取并打印切片内容
 	result := safeSlice.GetSlice()
 	for _, v := range result {

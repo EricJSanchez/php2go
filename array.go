@@ -218,6 +218,33 @@ func Slice2Chunk[T any](ori []T, chunkSize int) (ret [][]T) {
 	return
 }
 
+type GoTool struct {
+	ch chan int
+	wg sync.WaitGroup
+}
+
+func NewGoTool(num int) *GoTool {
+	return &GoTool{
+		ch: make(chan int, num),
+		wg: sync.WaitGroup{},
+	}
+}
+
+func (gt *GoTool) Add() {
+	gt.ch <- 1
+	gt.wg.Add(1)
+}
+
+func (gt *GoTool) Done() {
+	<-gt.ch
+	gt.wg.Done()
+}
+
+func (gt *GoTool) Wait() {
+	gt.wg.Wait()
+	close(gt.ch)
+}
+
 // SafeSlice 是一个线程安全的切片封装
 type SafeSlice[T any] struct {
 	mu    sync.Mutex
