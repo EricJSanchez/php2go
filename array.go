@@ -232,10 +232,10 @@ func NewSafeSlice[T any]() *SafeSlice[T] {
 }
 
 // Append 添加元素到切片中，确保线程安全
-func (ss *SafeSlice[T]) Append(value T) {
+func (ss *SafeSlice[T]) Append(value ...T) {
 	ss.mu.Lock()         // 加锁
 	defer ss.mu.Unlock() // 函数结束时解锁
-	ss.slice = append(ss.slice, value)
+	ss.slice = append(ss.slice, value...)
 }
 
 // GetSlice 返回当前切片的副本，确保线程安全

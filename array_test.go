@@ -87,13 +87,19 @@ func TestSafeSlice(t *testing.T) {
 
 	safeSlice := NewSafeSlice[MyStruct]()
 	var wg sync.WaitGroup
+	var ms []MyStruct
 	// 模拟并发写入
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
+		ms = append(ms, MyStruct{Value: i})
+	}
+	mss := Slice2Chunk[MyStruct](ms, 2)
+
+	for _, item := range mss {
 		wg.Add(1)
-		go func(val int) {
+		go func(item []MyStruct) {
 			defer wg.Done()
-			safeSlice.Append(MyStruct{Value: val})
-		}(i)
+			safeSlice.Append(item...)
+		}(item)
 	}
 	wg.Wait()
 	// 获取并打印切片内容
