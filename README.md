@@ -45,4 +45,19 @@ rr8 := ArrayDiff([]int64{1, 2, 3, 4, 5}, []int64{33, 109, 4})
 rr9 := ArrayUnique([]string{"a", "b", "c", "a", "b", "d"})
 
 rr10 := SliceRemove[Person](ps, []int{3, 2, 4, 0})
+
+rr11 := Slice2Chunk[Person](ps, 2)
+
+gt := NewGoTool(4) //控制并发数量
+gt.Add()
+gt.Done()
+gt.Wait()
+
+safeSlice := NewSafeSlice[MyStruct]()
+safeSlice.Append(item...)
+safeSlice.GetSlice()
+
+safeMap := NewSafeMap[int, MyStruct]()
+safeMap.Set(i, MyStruct{Value: i})
+safeMap.GetMap()
 ```

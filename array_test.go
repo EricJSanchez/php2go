@@ -3,7 +3,6 @@ package php2go
 import (
 	"fmt"
 	"testing"
-	"time"
 )
 
 type Person struct {
@@ -79,42 +78,10 @@ func TestSliceRemove(t *testing.T) {
 	fmt.Printf("type:%T,val:%v \n", rr, rr)
 }
 
-func TestSafeSlice(t *testing.T) {
-	// 示例结构体类型
-	type MyStruct struct {
-		Value int
-	}
-
-	safeSlice := NewSafeSlice[MyStruct]()
-	gt := NewGoTool(4)
-	var ms []MyStruct
-	// 模拟并发写入
-	for i := 0; i < 20; i++ {
-		ms = append(ms, MyStruct{Value: i})
-	}
-	mss := Slice2Chunk[MyStruct](ms, 2)
-
-	for _, item := range mss {
-		gt.Add()
-		go func(item []MyStruct) {
-			defer gt.Done()
-			safeSlice.Append(item...)
-			fmt.Println(item)
-			time.Sleep(1 * time.Second)
-		}(item)
-	}
-	gt.Wait()
-	// 获取并打印切片内容
-	result := safeSlice.GetSlice()
-	for _, v := range result {
-		fmt.Println(v.Value)
-	}
-}
-
 func TestSliceCut(t *testing.T) {
 
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
-	fmt.Println(Slice2Chunk[int](arr, 3))
+	fmt.Println(Slice2Chunk[int](arr, 20))
 
 	arrStr := []string{"a", "b", "c", "d", "e", "f", "g"}
 	fmt.Println(Slice2Chunk[string](arrStr, 2))

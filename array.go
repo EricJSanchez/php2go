@@ -1,10 +1,9 @@
 package php2go
 
 import (
-	"math"
+	"fmt"
 	"reflect"
 	"sort"
-	"sync"
 )
 
 type Integer interface {
@@ -33,15 +32,16 @@ func ArrayColumn[T IntegerString](s interface{}, col string) (retCol []T) {
 		tmpRv := rv.Index(i)
 		value := tmpRv.FieldByName(col)
 		if !value.IsValid() {
-			panic("unknown field: " + col)
+			fmt.Println("unknown field:", col)
+			return
 		}
 		switch value.Kind() {
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Float32, reflect.Float64, reflect.String:
 			value := value.Interface().(T)
 			retCol = append(retCol, value)
 		default:
-			panic("unknown field: " + col)
-			break
+			fmt.Println("unknown case:", value.Kind())
+			return
 		}
 	}
 	return
@@ -60,16 +60,14 @@ func ArraySum[T Integer](s interface{}, col string) (sum T) {
 		}
 		value := tmpRv.FieldByName(col)
 		if !value.IsValid() {
-			panic("unknown field: " + col)
-			break
+			return
 		}
 		switch value.Kind() {
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Float32, reflect.Float64:
 			value := value.Interface().(T)
 			sum = sum + value
 		default:
-			panic("unknown field: " + col)
-			break
+			return
 		}
 	}
 	return
@@ -105,7 +103,7 @@ func InArray(needle interface{}, haystack interface{}) bool {
 			}
 		}
 	default:
-		panic("haystack: haystack type muset be slice, array or map")
+		return false
 	}
 
 	return false
@@ -136,7 +134,6 @@ func ArrayDiff[T IntegerString](s1, s2 []T) (diffArr []T) {
 			temp[val] = true
 		}
 	}
-
 	for _, val := range s1 {
 		if _, ok := temp[val]; !ok {
 			diffArr = append(diffArr, val)
@@ -175,12 +172,6 @@ func Min[T IntegerString](s1 []T) (retVal T) {
 
 // SliceRemove 根据index删除值
 func SliceRemove[T any](ori []T, idx []int, flag ...int) (ret []T) {
-	defer func() {
-		if r := recover(); r != nil {
-			ret = ori
-			return
-		}
-	}()
 	if len(idx) == 0 {
 		ret = ori
 		return
@@ -195,82 +186,23 @@ func SliceRemove[T any](ori []T, idx []int, flag ...int) (ret []T) {
 	return SliceRemove(append(ori[:idx[0]], ori[idx[0]+1:]...), idx[1:], 1)
 }
 
-// Slice2Chunk 切片按传入的数量切割成二维切片
-func Slice2Chunk[T any](ori []T, chunkSize int) (ret [][]T) {
-	defer func() {
-		if r := recover(); r != nil {
-			return
-		}
-	}()
+// Slice2Chunk 将切片按指定大小分块
+func Slice2Chunk[T any](ori []T, chunkSize int) [][]T {
+	if chunkSize <= 0 {
+		return nil
+	}
+
 	total := len(ori)
-	j := math.Ceil(float64(total) / float64(chunkSize))
-	var left, right int
-	for i := 0; i < int(j); i++ {
-		if left+chunkSize > total {
-			right = total
-		} else {
-			right = left + chunkSize
+	chunkCount := (total + chunkSize - 1) / chunkSize // 计算分块数
+	result := make([][]T, 0, chunkCount)              // 预分配结果切片
+
+	for i := 0; i < total; i += chunkSize {
+		end := i + chunkSize
+		if end > total {
+			end = total
 		}
-		cutSlice := ori[left:right]
-		ret = append(ret, cutSlice)
-		left = right
+		result = append(result, ori[i:end])
 	}
-	return
-}
 
-type GoTool struct {
-	ch chan int
-	wg sync.WaitGroup
-}
-
-func NewGoTool(num int) *GoTool {
-	return &GoTool{
-		ch: make(chan int, num),
-		wg: sync.WaitGroup{},
-	}
-}
-
-func (gt *GoTool) Add() {
-	gt.ch <- 1
-	gt.wg.Add(1)
-}
-
-func (gt *GoTool) Done() {
-	<-gt.ch
-	gt.wg.Done()
-}
-
-func (gt *GoTool) Wait() {
-	gt.wg.Wait()
-	close(gt.ch)
-}
-
-// SafeSlice 是一个线程安全的切片封装
-type SafeSlice[T any] struct {
-	mu    sync.Mutex
-	slice []T
-}
-
-// NewSafeSlice 创建并返回一个新的 SafeSlice 实例
-func NewSafeSlice[T any]() *SafeSlice[T] {
-	return &SafeSlice[T]{
-		slice: make([]T, 0),
-	}
-}
-
-// Append 添加元素到切片中，确保线程安全
-func (ss *SafeSlice[T]) Append(value ...T) {
-	ss.mu.Lock()         // 加锁
-	defer ss.mu.Unlock() // 函数结束时解锁
-	ss.slice = append(ss.slice, value...)
-}
-
-// GetSlice 返回当前切片的副本，确保线程安全
-func (ss *SafeSlice[T]) GetSlice() []T {
-	ss.mu.Lock()         // 加锁
-	defer ss.mu.Unlock() // 函数结束时解锁
-	// 返回切片的副本以避免外部修改
-	newSlice := make([]T, len(ss.slice))
-	copy(newSlice, ss.slice)
-	return newSlice
+	return result
 }
