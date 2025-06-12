@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
+	"time"
 )
 
 type Integer interface {
@@ -205,4 +207,80 @@ func Slice2Chunk[T any](ori []T, chunkSize int) [][]T {
 	}
 
 	return result
+}
+
+// Struct2Map struct To MapInterface
+func Struct2Map(src interface{}) (map[string]interface{}, error) {
+	v := reflect.ValueOf(src)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	if v.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("input is not a struct")
+	}
+
+	out := make(map[string]interface{}, v.NumField())
+	t := v.Type()
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		fieldValue := v.Field(i)
+
+		if !fieldValue.CanInterface() {
+			continue
+		}
+
+		// 获取 JSON 标签
+		key := field.Name
+		if jsonTag := field.Tag.Get("json"); jsonTag != "" {
+			key = strings.Split(jsonTag, ",")[0]
+		}
+
+		// 特殊类型处理
+		if fieldValue.Type() == reflect.TypeOf(time.Time{}) {
+			out[key] = fieldValue.Interface()
+			continue
+		}
+
+		// 递归处理嵌套类型
+		switch fieldValue.Kind() {
+		case reflect.Struct:
+			nested, err := Struct2Map(fieldValue.Interface())
+			if err != nil {
+				return nil, err
+			}
+			out[key] = nested
+
+		case reflect.Ptr:
+			if !fieldValue.IsNil() && fieldValue.Elem().Kind() == reflect.Struct {
+				nested, err := Struct2Map(fieldValue.Interface())
+				if err != nil {
+					return nil, err
+				}
+				out[key] = nested
+			} else {
+				out[key] = fieldValue.Interface()
+			}
+
+		case reflect.Slice, reflect.Array:
+			sliceVal := make([]interface{}, fieldValue.Len())
+			for j := 0; j < fieldValue.Len(); j++ {
+				elem := fieldValue.Index(j)
+				if elem.Kind() == reflect.Struct {
+					nested, err := Struct2Map(elem.Interface())
+					if err != nil {
+						return nil, err
+					}
+					sliceVal[j] = nested
+				} else {
+					sliceVal[j] = elem.Interface()
+				}
+			}
+			out[key] = sliceVal
+
+		default:
+			out[key] = fieldValue.Interface()
+		}
+	}
+	return out, nil
 }
