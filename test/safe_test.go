@@ -1,7 +1,8 @@
-package php2go
+package test
 
 import (
 	"fmt"
+	"github.com/EricJSanchez/php2go"
 	"sync"
 	"testing"
 	"time"
@@ -13,14 +14,14 @@ func TestSafeSlice(t *testing.T) {
 		Value int
 	}
 
-	safeSlice := NewSafeSlice[MyStruct]()
-	gt := NewGoTool(4)
+	safeSlice := php2go.NewSafeSlice[MyStruct]()
+	gt := php2go.NewGoTool(4)
 	var ms []MyStruct
 	// 模拟并发写入
 	for i := 0; i < 20; i++ {
 		ms = append(ms, MyStruct{Value: i})
 	}
-	mss := Slice2Chunk[MyStruct](ms, 2)
+	mss := php2go.Slice2Chunk[MyStruct](ms, 2)
 
 	for _, item := range mss {
 		gt.Add()
@@ -44,7 +45,7 @@ func TestSafeMap(t *testing.T) {
 	type MyStruct struct {
 		Value int
 	}
-	safeMap := NewSafeMap[int, MyStruct]()
+	safeMap := php2go.NewSafeMap[int, MyStruct]()
 	// 模拟并发写入
 	wg := sync.WaitGroup{}
 	for i := 0; i < 20; i++ {

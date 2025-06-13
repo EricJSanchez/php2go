@@ -1,7 +1,8 @@
-package php2go
+package test
 
 import (
 	"fmt"
+	"github.com/EricJSanchez/php2go"
 	"testing"
 	"time"
 )
@@ -29,63 +30,63 @@ var ps = []Person{
 }
 
 func TestArray(t *testing.T) {
-	rr := ArrayColumn[int](ps, "Id")
+	rr := php2go.ArrayColumn[int](ps, "Id")
 	fmt.Printf("%T \n", rr)
 	fmt.Println(rr)
-	rr1 := ArrayColumn[string](ps, "Name")
+	rr1 := php2go.ArrayColumn[string](ps, "Name")
 	fmt.Printf("1 %T:", rr1)
 	fmt.Println(rr1)
-	rr2 := ArrayColumn[int64](ps, "Age")
+	rr2 := php2go.ArrayColumn[int64](ps, "Age")
 	fmt.Printf("2 %T:", rr2)
 	fmt.Println(rr2)
 
-	rr3 := ArrayReverse([]int64{1, 2, 3, 4, 5})
+	rr3 := php2go.ArrayReverse([]int64{1, 2, 3, 4, 5})
 	fmt.Printf("3 %T:", rr3)
 	fmt.Println(rr3)
-	rr4 := ArraySum[int](ps, "Id")
+	rr4 := php2go.ArraySum[int](ps, "Id")
 	fmt.Printf("4 %T:", rr4)
 	fmt.Println(rr4)
-	rr5 := ArraySum[int64]([]int64{1, 2, 3, 4, 5}, "")
+	rr5 := php2go.ArraySum[int64]([]int64{1, 2, 3, 4, 5}, "")
 	fmt.Printf("5 %T:", rr5)
 	fmt.Println(rr5)
 	//rr6 := InArray(6, []int{1, 2, 3, 4, 5, 6})
-	rr6 := InArray(int64(6), []int64{1, 2, 3, 4, 5, 6})
+	rr6 := php2go.InArray(int64(6), []int64{1, 2, 3, 4, 5, 6})
 	fmt.Printf("6 %T:", rr6)
 	fmt.Println(rr6)
-	rr7 := ArrayIntersect([]int64{1, 2, 3, 4, 5}, []int64{33, 109})
+	rr7 := php2go.ArrayIntersect([]int64{1, 2, 3, 4, 5}, []int64{33, 109})
 	fmt.Printf("7 %T:", rr7)
 	fmt.Println(rr7)
-	rr8 := ArrayDiff([]int64{1, 2, 3, 4, 5}, []int64{33, 109, 4})
+	rr8 := php2go.ArrayDiff([]int64{1, 2, 3, 4, 5}, []int64{33, 109, 4})
 	fmt.Printf("8 %T:", rr8)
 	fmt.Println(rr8)
 
-	rr9 := ArrayUnique([]string{"a", "b", "c", "a", "b", "d"})
+	rr9 := php2go.ArrayUnique([]string{"a", "b", "c", "a", "b", "d"})
 	fmt.Printf("9 %T:", rr9)
 	fmt.Println(rr9)
 
 	//rr10 := Min([]string{"a", "b", "c", "a", "b", "d", "d3"})
-	rr10 := Min([]int{1, 2, 3, 4, 5, 0})
+	rr10 := php2go.Min([]int{1, 2, 3, 4, 5, 0})
 	fmt.Printf("10 %T:", rr10)
 	fmt.Println(rr10)
 
 	//rr11 := Max([]string{"a", "b", "c", "a", "b", "d", "d3"})
-	rr11 := Min([]int64{})
+	rr11 := php2go.Min([]int64{})
 	fmt.Printf("11 %T:", rr11)
 	fmt.Println(rr11)
 }
 
 func TestSliceRemove(t *testing.T) {
-	rr := SliceRemove[Person](ps, []int{3, 2, 4, 0})
+	rr := php2go.SliceRemove[Person](ps, []int{3, 2, 4, 0})
 	fmt.Printf("type:%T,val:%v \n", rr, rr)
 }
 
 func TestSliceCut(t *testing.T) {
 
 	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
-	fmt.Println(Slice2Chunk[int](arr, 20))
+	fmt.Println(php2go.Slice2Chunk[int](arr, 20))
 
 	arrStr := []string{"a", "b", "c", "d", "e", "f", "g"}
-	fmt.Println(Slice2Chunk[string](arrStr, 2))
+	fmt.Println(php2go.Slice2Chunk[string](arrStr, 2))
 
 	// 示例结构体类型
 	type MyStruct struct {
@@ -97,7 +98,7 @@ func TestSliceCut(t *testing.T) {
 			Value: i,
 		})
 	}
-	fmt.Println(Slice2Chunk[MyStruct](ms, 2))
+	fmt.Println(php2go.Slice2Chunk[MyStruct](ms, 2))
 }
 
 type User struct {
@@ -135,11 +136,11 @@ func TestStructToMap(t *testing.T) {
 			Birthday: time.Date(1998, 5, 10, 0, 0, 0, 0, time.UTC),
 		}
 
-		result, err := Struct2Map(user)
+		result, err := php2go.Struct2Map(user)
 		if err != nil {
 			t.Fatalf("转换失败: %v", err)
 		}
-		Pr(result)
+		php2go.Pr(result)
 		if result["name"] != "张三" || result["age"] != 25 {
 			t.Errorf("基本结构体转换错误")
 		}
@@ -159,11 +160,11 @@ func TestStructToMap(t *testing.T) {
 			Tags: []string{"golang", "backend"},
 		}
 
-		result, err := Struct2Map(profile)
+		result, err := php2go.Struct2Map(profile)
 		if err != nil {
 			t.Fatalf("转换失败: %v", err)
 		}
-		Pr(result)
+		php2go.Pr(result)
 		if userMap, ok := result["user"].(map[string]interface{}); !ok || userMap["name"] != "李四" {
 			t.Errorf("嵌套结构体转换错误")
 		}
@@ -178,16 +179,16 @@ func TestStructToMap(t *testing.T) {
 			},
 		}
 
-		result, err := Struct2Map(student)
+		result, err := php2go.Struct2Map(student)
 		if err != nil {
 			t.Fatalf("转换失败: %v", err)
 		}
-		Pr(result)
+		php2go.Pr(result)
 		scores, ok := result["scores"].([]interface{})
 		if !ok || len(scores) != 2 {
 			t.Fatal("切片结构体转换失败")
 		}
-		Pr(scores)
+		php2go.Pr(scores)
 		firstScore := scores[0].(map[string]interface{})
 		if firstScore["subject"] != "数学" {
 			t.Error("切片元素字段解析错误")
@@ -200,11 +201,11 @@ func TestStructToMap(t *testing.T) {
 			Scores: []Score{}, // 空切片测试
 		}
 
-		result, err := Struct2Map(student)
+		result, err := php2go.Struct2Map(student)
 		if err != nil {
 			t.Fatal(err)
 		}
-		Pr(result)
+		php2go.Pr(result)
 		if scores, ok := result["scores"].([]interface{}); !ok || len(scores) != 0 {
 			t.Error("空切片处理错误")
 		}
@@ -217,7 +218,7 @@ func TestStructToMap(t *testing.T) {
 			Country: "中国",
 		}
 
-		result, err := Struct2Map(addr)
+		result, err := php2go.Struct2Map(addr)
 		if err != nil {
 			t.Fatalf("转换失败: %v", err)
 		}
@@ -230,8 +231,8 @@ func TestStructToMap(t *testing.T) {
 
 	// 测试非结构体输入
 	t.Run("NonStructInput", func(t *testing.T) {
-		result, err := Struct2Map("not a struct")
-		Pr(result)
+		result, err := php2go.Struct2Map("not a struct")
+		php2go.Pr(result)
 		if err == nil {
 			t.Errorf("非结构体输入应该返回错误")
 		}
