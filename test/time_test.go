@@ -14,5 +14,8 @@ func TestTime(t *testing.T) {
 	if t11 != "2025-01-02" {
 		t.Error("时间转换出错")
 	}
-	php2go.Pr(php2go.Date("YmdHis"))
+	php2go.Pr(php2go.Date("YmdHi"))
+
+	t2 := php2go.StrToTime(php2go.Date("YmdHi"))
+	php2go.Pr("ts", t2)
 }

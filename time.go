@@ -28,7 +28,7 @@ func StrToTime(input string, baseTime ...int64) int64 {
 	}
 
 	// 处理绝对时间格式
-	if t, err := parseAbsoluteTime(input, base); err == nil {
+	if t, err := parseAbsoluteTime(input); err == nil {
 		return t.Unix()
 	}
 
@@ -81,21 +81,24 @@ func parseRelativeTime(input string, base time.Time) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("不是有效的相对时间格式")
 }
 
-func parseAbsoluteTime(input string, base time.Time) (time.Time, error) {
+func parseAbsoluteTime(input string) (time.Time, error) {
 	// 尝试常见日期格式
 	formats := []string{
 		"2006-01-02 15:04:05",
+		"2006-01-02 15:04",
+		"2006-01-02 15",
 		"2006-01-02",
-		"01/02/2006",
-		"02 Jan 2006",
-		"Jan 02 2006",
+		"20060102150405",
+		"200601021504",
+		"2006010215",
+		"20060102",
 		time.RFC1123,
 		time.RFC1123Z,
 		time.RFC3339,
 	}
 
 	for _, format := range formats {
-		if t, err := time.Parse(format, input); err == nil {
+		if t, err := time.ParseInLocation(format, input, SysTimeLocation); err == nil {
 			return t, nil
 		}
 	}
